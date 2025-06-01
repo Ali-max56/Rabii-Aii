@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kashif AI Chatbot</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #0ff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+    .chat-box {
+      width: 90%;
+      max-width: 600px;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 20px 0;
+      background: #111;
+      box-shadow: 0 0 20px #0ff;
+      min-height: 300px;
+      overflow-y: auto;
+    }
+    .input-area {
+      display: flex;
+      width: 90%;
+      max-width: 600px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px 0 0 5px;
+      font-size: 16px;
+    }
+    button {
+      background: #0ff;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      font-weight: bold;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+    .msg {
+      margin: 10px 0;
+    }
+    .user { color: #0f0; }
+    .bot { color: #f0f; }
+  </style>
+</head>
+<body>
+  <h1>🤖 Kashif AI Chatbot</h1>
+  <div class="chat-box" id="chat"></div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask me anything..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const chat = document.getElementById("chat");
+      const message = input.value.trim();
+      if (!message) return;
+
+      chat.innerHTML += `<div class="msg user"><strong>You:</strong> ${message}</div>`;
+      input.value = "";
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        chat.innerHTML += `<div class="msg bot"><strong>Bot:</strong> ${data.reply}</div>`;
+      } catch (err) {
+        chat.innerHTML += `<div class="msg bot"><strong>Bot:</strong> ❌ No response</div>`;
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
